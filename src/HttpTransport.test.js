@@ -1,6 +1,6 @@
 /* eslint-disable import/first */
 /* eslint-disable import/newline-after-import */
-/* globals describe,test,expect,jest,afterEach,beforeAll */
+/* globals describe,test,expect,jest,afterEach */
 import '@babel/runtime/regenerator';
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch';
@@ -29,10 +29,6 @@ describe('HttpTransport', () => {
     ]
   };
   const largeQueryJson = `{"query":{"measures":["Orders.count"],"dimensions":["Users.country"],"filters":[{"member":"Users.id","operator":"equals","values":${JSON.stringify(ids)}}]}}`;
-
-  beforeAll(() => {
-    fetch.mockReturnValue(Promise.resolve({ ok: true }));
-  });
 
   afterEach(() => {
     fetch.mockClear();

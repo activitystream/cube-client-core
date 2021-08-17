@@ -1,6 +1,15 @@
 import 'jest';
 import ResultSet from '../ResultSet';
 
+jest.mock('moment-range', () => {
+  const Moment = jest.requireActual('moment');
+  const MomentRange = jest.requireActual('moment-range');
+  const moment = MomentRange.extendMoment(Moment);
+  return {
+    extendMoment: () => moment,
+  };
+});
+
 const loadResponses = [
   {
     queryType: 'compareDateRangeQuery',
@@ -312,30 +321,37 @@ describe('compare date range', () => {
           key: '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count',
           series: [
             {
+              category: '2020-08-10T00:00:00.000',
               value: 1,
               x: '2020-08-10T00:00:00.000',
             },
             {
+              category: '2020-08-11T00:00:00.000',
               value: 0,
               x: '2020-08-11T00:00:00.000',
             },
             {
+              category: '2020-08-12T00:00:00.000',
               value: 1,
               x: '2020-08-12T00:00:00.000',
             },
             {
+              category: '2020-08-13T00:00:00.000',
               value: 0,
               x: '2020-08-13T00:00:00.000',
             },
             {
+              category: '2020-08-14T00:00:00.000',
               value: 0,
               x: '2020-08-14T00:00:00.000',
             },
             {
+              category: '2020-08-15T00:00:00.000',
               value: 0,
               x: '2020-08-15T00:00:00.000',
             },
             {
+              category: '2020-08-16T00:00:00.000',
               value: 0,
               x: '2020-08-16T00:00:00.000',
             },
@@ -346,30 +362,37 @@ describe('compare date range', () => {
           key: '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count',
           series: [
             {
+              category: '2020-08-10T00:00:00.000',
               value: 2,
               x: '2020-08-10T00:00:00.000',
             },
             {
+              category: '2020-08-11T00:00:00.000',
               value: 1,
               x: '2020-08-11T00:00:00.000',
             },
             {
+              category: '2020-08-12T00:00:00.000',
               value: 0,
               x: '2020-08-12T00:00:00.000',
             },
             {
+              category: '2020-08-13T00:00:00.000',
               value: 1,
               x: '2020-08-13T00:00:00.000',
             },
             {
+              category: '2020-08-14T00:00:00.000',
               value: 0,
               x: '2020-08-14T00:00:00.000',
             },
             {
+              category: '2020-08-15T00:00:00.000',
               value: 1,
               x: '2020-08-15T00:00:00.000',
             },
             {
+              category: '2020-08-16T00:00:00.000',
               value: 0,
               x: '2020-08-16T00:00:00.000',
             },
@@ -384,42 +407,49 @@ describe('compare date range', () => {
     test('with a single time dimension', () => {
       expect(resultSet1.chartPivot()).toStrictEqual([
         {
+          category: '2020-08-10T00:00:00.000',
           x: '2020-08-10T00:00:00.000',
           xValues: ['2020-08-10T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 1,
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count': 2,
         },
         {
+          category: '2020-08-11T00:00:00.000',
           x: '2020-08-11T00:00:00.000',
           xValues: ['2020-08-11T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 0,
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count': 1,
         },
         {
+          category: '2020-08-12T00:00:00.000',
           x: '2020-08-12T00:00:00.000',
           xValues: ['2020-08-12T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 1,
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count': 0,
         },
         {
+          category: '2020-08-13T00:00:00.000',
           x: '2020-08-13T00:00:00.000',
           xValues: ['2020-08-13T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 0,
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count': 1,
         },
         {
+          category: '2020-08-14T00:00:00.000',
           x: '2020-08-14T00:00:00.000',
           xValues: ['2020-08-14T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 0,
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count': 0,
         },
         {
+          category: '2020-08-15T00:00:00.000',
           x: '2020-08-15T00:00:00.000',
           xValues: ['2020-08-15T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 0,
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,Orders.count': 1,
         },
         {
+          category: '2020-08-16T00:00:00.000',
           x: '2020-08-16T00:00:00.000',
           xValues: ['2020-08-16T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,Orders.count': 0,
@@ -431,6 +461,7 @@ describe('compare date range', () => {
     test('with two dimensions', () => {
       expect(resultSet2.chartPivot()).toStrictEqual([
         {
+          category: '2020-08-10T00:00:00.000',
           x: '2020-08-10T00:00:00.000',
           xValues: ['2020-08-10T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 1,
@@ -440,6 +471,7 @@ describe('compare date range', () => {
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,US,Orders.count': 0,
         },
         {
+          category: '2020-08-11T00:00:00.000',
           x: '2020-08-11T00:00:00.000',
           xValues: ['2020-08-11T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 0,
@@ -449,6 +481,7 @@ describe('compare date range', () => {
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,US,Orders.count': 0,
         },
         {
+          category: '2020-08-12T00:00:00.000',
           x: '2020-08-12T00:00:00.000',
           xValues: ['2020-08-12T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 0,
@@ -458,6 +491,7 @@ describe('compare date range', () => {
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,US,Orders.count': 0,
         },
         {
+          category: '2020-08-13T00:00:00.000',
           x: '2020-08-13T00:00:00.000',
           xValues: ['2020-08-13T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 0,
@@ -467,6 +501,7 @@ describe('compare date range', () => {
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,US,Orders.count': 1,
         },
         {
+          category: '2020-08-14T00:00:00.000',
           x: '2020-08-14T00:00:00.000',
           xValues: ['2020-08-14T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 0,
@@ -476,6 +511,7 @@ describe('compare date range', () => {
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,US,Orders.count': 0,
         },
         {
+          category: '2020-08-15T00:00:00.000',
           x: '2020-08-15T00:00:00.000',
           xValues: ['2020-08-15T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 0,
@@ -485,6 +521,7 @@ describe('compare date range', () => {
           '2020-08-03T00:00:00.000 - 2020-08-09T23:59:59.999,US,Orders.count': 0,
         },
         {
+          category: '2020-08-16T00:00:00.000',
           x: '2020-08-16T00:00:00.000',
           xValues: ['2020-08-16T00:00:00.000'],
           '2020-08-10T00:00:00.000 - 2020-08-16T23:59:59.999,US,Orders.count': 0,
@@ -501,9 +538,9 @@ describe('compare date range', () => {
     test('with a single time dimension', () => {
       const pivotConfig = {
         x: ['Orders.ts.day'],
-        y: ['compareDateRange', 'measures'],
+        y: ['compareDateRange', 'measures']
       };
-
+      
       expect(resultSet1.tableColumns(pivotConfig)).toMatchObject([
         {
           key: 'Orders.ts.day',

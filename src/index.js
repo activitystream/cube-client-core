@@ -1,10 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'uuid/v4';
 import ResultSet from './ResultSet';
 import SqlQuery from './SqlQuery';
 import Meta from './Meta';
 import ProgressResult from './ProgressResult';
 import HttpTransport from './HttpTransport';
 import RequestError from './RequestError';
+
+const API_URL = process.env.CUBEJS_API_URL;
 
 let mutexCounter = 0;
 
@@ -21,13 +23,8 @@ class CubejsApi {
       apiToken = undefined;
     }
     options = options || {};
-
-    if (!options.transport && !options.apiUrl) {
-      throw new Error('The `apiUrl` option is required');
-    }
-
     this.apiToken = apiToken;
-    this.apiUrl = options.apiUrl;
+    this.apiUrl = options.apiUrl || API_URL;
     this.method = options.method;
     this.headers = options.headers || {};
     this.credentials = options.credentials;
@@ -43,7 +40,7 @@ class CubejsApi {
   }
 
   request(method, params) {
-    return this.transport.request(method, { baseRequestId: uuidv4(), ...params });
+    return this.transport.request(method, { baseRequestId: uuid(), ...params });
   }
 
   loadMethod(request, toResult, options, callback) {
@@ -107,16 +104,7 @@ class CubejsApi {
         await checkMutex();
         return continueWait(true);
       }
-
-      let body = {};
-      let text = '';
-      try {
-        text = await response.text();
-        body = JSON.parse(text);
-      } catch (_) {
-        body.error = text;
-      }
-
+      const body = await response.json();
       if (body.error === 'Continue wait') {
         await checkMutex();
         if (options.progressCallback) {
@@ -124,13 +112,12 @@ class CubejsApi {
         }
         return continueWait();
       }
-
       if (response.status !== 200) {
         await checkMutex();
         if (!options.subscribe && requestInstance.unsubscribe) {
           await requestInstance.unsubscribe();
         }
-
+        
         const error = new RequestError(body.error, body); // TODO error class
         if (callback) {
           callback(error);
@@ -183,14 +170,10 @@ class CubejsApi {
   }
 
   load(query, options, callback) {
-    const queryParams = options.queryParams || {};
     return this.loadMethod(
       () => this.request('load', {
-        ...queryParams,
-        ...{
-          query,
-          queryType: 'multi'
-        }
+        query,
+        queryType: 'multi'
       }),
       (response) => new ResultSet(response, { parseDateMeasures: this.parseDateMeasures }),
       options,
@@ -215,7 +198,7 @@ class CubejsApi {
       callback
     );
   }
-
+  
   dryRun(query, options, callback) {
     return this.loadMethod(
       () => this.request('dry-run', { query }),
@@ -240,16 +223,12 @@ class CubejsApi {
 
 export default (apiToken, options) => new CubejsApi(apiToken, options);
 
-export { CubejsApi, HttpTransport, ResultSet };
+export { HttpTransport, ResultSet };
 export {
-  areQueriesEqual,
   defaultHeuristics,
   movePivotItem,
   isQueryPresent,
   moveItemInArray,
   defaultOrder,
-  flattenFilters,
-  getQueryMembers,
-  getOrderMembersFromOrder,
-  GRANULARITIES
+  flattenFilters
 } from './utils';
