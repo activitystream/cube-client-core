@@ -98,6 +98,10 @@ declare module '@cubejs-client/core' {
      * Function that receives `ProgressResult` on each `Continue wait` message.
      */
     progressCallback?(result: ProgressResult): void;
+    /**
+     * QueryParams
+     */
+    queryParams: { [key: string]: string };
   };
 
   export type LoadMethodCallback<T> = (error: Error | null, resultSet: T) => void;

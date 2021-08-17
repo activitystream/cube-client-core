@@ -183,10 +183,14 @@ class CubejsApi {
   }
 
   load(query, options, callback) {
+    const queryParams = options.queryParams || {};
     return this.loadMethod(
       () => this.request('load', {
-        query,
-        queryType: 'multi'
+        ...queryParams,
+        ...{
+          query,
+          queryType: 'multi'
+        }
       }),
       (response) => new ResultSet(response, { parseDateMeasures: this.parseDateMeasures }),
       options,
